@@ -50,6 +50,9 @@ class AppDatabase extends _$AppDatabase {
   Future<DayVoteEntry?> getVoteForDate(String date) =>
       (select(dayVotes)..where((v) => v.date.equals(date))).getSingleOrNull();
 
+  Future<List<DayVoteEntry>> getVotesForDates(List<String> dates) =>
+      (select(dayVotes)..where((v) => v.date.isIn(dates))).get();
+
   Future<void> upsertDayVote(DayVotesCompanion vote) =>
       into(dayVotes).insertOnConflictUpdate(vote);
 }

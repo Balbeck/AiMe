@@ -8,7 +8,7 @@ import 'pages/home_page/home_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  AppDatabase.instance; // initialise la DB au démarrage
+  AppDatabase.instance; // init DB au lauch
   runApp(const AiMeApp());
 }
 

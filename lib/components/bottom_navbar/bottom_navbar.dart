@@ -37,9 +37,24 @@ class BottomNavbar extends StatefulWidget {
       label: 'Journée +/-',
     ),
     NavbarButtonConfig(
+      icon: Icons.smoking_rooms,
+      routePath: '/cigarette',
+      label: 'Cigarette',
+    ),
+    NavbarButtonConfig(
+      icon: Icons.calendar_month,
+      routePath: '/calendrier',
+      label: 'Calendrier',
+    ),
+    NavbarButtonConfig(
       icon: Icons.person,
       routePath: '/profile',
       label: 'Profile',
+    ),
+    NavbarButtonConfig(
+      icon: Icons.settings,
+      routePath: '/parametres',
+      label: 'Paramètres',
     ),
   ];
 

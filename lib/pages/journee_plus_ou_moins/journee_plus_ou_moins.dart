@@ -4,6 +4,8 @@ import '../../core/day_vote.dart';
 import '../../components/day_date_header/day_date_header.dart';
 import '../../components/day_vote_button/day_vote_button.dart';
 import '../../components/day_vote_result/day_vote_result.dart';
+import '../../components/day_vote_modal/day_vote_modal.dart';
+import '../../components/week_calendar_row/week_calendar_row.dart';
 import 'journee_plus_ou_moins_style.dart';
 
 class JourneePlusOuMoinsPage extends StatefulWidget {
@@ -18,6 +20,7 @@ class JourneePlusOuMoinsPage extends StatefulWidget {
 
 class _JourneePlusOuMoinsPageState extends State<JourneePlusOuMoinsPage> {
   DayVote? _todayVote;
+  Map<String, DayVote?> _weekVotes = {};
   final DateTime _today = DateTime.now();
 
   String get _dateKey {
@@ -27,25 +30,53 @@ class _JourneePlusOuMoinsPageState extends State<JourneePlusOuMoinsPage> {
     return '$y-$m-$d';
   }
 
+  List<String> get _weekDateKeys {
+    final monday = _today.subtract(Duration(days: _today.weekday - 1));
+    return List.generate(7, (i) {
+      final day = monday.add(Duration(days: i));
+      final m = day.month.toString().padLeft(2, '0');
+      final d = day.day.toString().padLeft(2, '0');
+      return '${day.year}-$m-$d';
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    _loadTodayVote();
+    _loadWeekVotes();
   }
 
-  Future<void> _loadTodayVote() async {
-    final entry = await AppDatabase.instance.getVoteForDate(_dateKey);
-    if (entry == null || !mounted) return;
-    final vote = DayVote.values.where((v) => v.name == entry.vote).firstOrNull;
-    if (vote != null) setState(() => _todayVote = vote);
+  Future<void> _loadWeekVotes() async {
+    final dates = _weekDateKeys;
+    final entries = await AppDatabase.instance.getVotesForDates(dates);
+    if (!mounted) return;
+    final votes = <String, DayVote?>{for (final date in dates) date: null};
+    for (final entry in entries) {
+      votes[entry.date] =
+          DayVote.values.where((v) => v.name == entry.vote).firstOrNull;
+    }
+    setState(() {
+      _weekVotes = votes;
+      _todayVote = votes[_dateKey];
+    });
   }
 
   void _saveDayVote(DayVote vote) {
-    setState(() => _todayVote = vote);
+    setState(() {
+      _todayVote = vote;
+      _weekVotes = {..._weekVotes, _dateKey: vote};
+    });
     AppDatabase.instance.upsertDayVote(DayVotesCompanion.insert(
       date: _dateKey,
       vote: vote.name,
     ));
+  }
+
+  void _openTodayVoteModal() {
+    showDialog(
+      context: context,
+      builder: (_) => DayVoteModal(onVote: _saveDayVote),
+    );
   }
 
   @override
@@ -55,15 +86,13 @@ class _JourneePlusOuMoinsPageState extends State<JourneePlusOuMoinsPage> {
       children: [
         DayDateHeader(date: _today),
         if (_todayVote == null) ...[
-          const Expanded(
-            child: Center(
-              child: Text(
-                JourneePlusOuMoinsStyle.questionText,
-                style: JourneePlusOuMoinsStyle.questionTextStyle,
-                textAlign: TextAlign.center,
-              ),
-            ),
+          const Spacer(),
+          const Text(
+            JourneePlusOuMoinsStyle.questionText,
+            style: JourneePlusOuMoinsStyle.questionTextStyle,
+            textAlign: TextAlign.center,
           ),
+          const Spacer(),
           Padding(
             padding: JourneePlusOuMoinsStyle.voteRowPadding,
             child: Row(
@@ -87,10 +116,22 @@ class _JourneePlusOuMoinsPageState extends State<JourneePlusOuMoinsPage> {
               ],
             ),
           ),
-        ] else ...[
-          Expanded(
-            child: DayVoteResult(vote: _todayVote!),
+          WeekCalendarRow(
+            weekVotes: _weekVotes,
+            today: _today,
+            onTodayTap: _openTodayVoteModal,
           ),
+          const Spacer(),
+        ] else ...[
+          const Spacer(),
+          DayVoteResult(vote: _todayVote!),
+          const Spacer(),
+          WeekCalendarRow(
+            weekVotes: _weekVotes,
+            today: _today,
+            onTodayTap: _openTodayVoteModal,
+          ),
+          const Spacer(),
         ],
       ],
     );

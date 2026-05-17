@@ -10,5 +10,6 @@ abstract class JourneePlusOuMoinsStyle {
     color: Colors.black87,
   );
 
-  static const EdgeInsets voteRowPadding = EdgeInsets.only(bottom: 120.0);
+  static const EdgeInsets voteRowPadding =
+      EdgeInsets.symmetric(horizontal: 16);
 }

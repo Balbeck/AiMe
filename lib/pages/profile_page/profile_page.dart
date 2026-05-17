@@ -8,8 +8,12 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(ProfilePageStyle.pageTitle),
+    return const Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: ProfilePageStyle.titlePadding,
+        child: Text(ProfilePageStyle.pageTitle),
+      ),
     );
   }
 }

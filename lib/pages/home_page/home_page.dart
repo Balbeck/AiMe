@@ -8,8 +8,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text(HomePageStyle.pageTitle),
+    return const Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: HomePageStyle.titlePadding,
+        child: Text(HomePageStyle.pageTitle),
+      ),
     );
   }
 }
