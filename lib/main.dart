@@ -3,12 +3,14 @@ import 'components/bottom_navbar/bottom_navbar.dart';
 import 'components/params_drawer/params_drawer.dart';
 import 'components/top_bar/top_bar.dart';
 import 'core/database/app_database.dart';
+import 'core/wallpaper_state.dart';
 import 'routes/routes.dart' show generateRoute;
 import 'pages/home_page/home_page.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  AppDatabase.instance; // init DB au lauch
+  await WallpaperState.load();
+  AppDatabase.instance; // init DB au launch
   runApp(const AiMeApp());
 }
 
@@ -40,10 +42,13 @@ class AiMeApp extends StatelessWidget {
           body: Stack(
             fit: StackFit.expand,
             children: [
-              Image.asset(
-                'lib/background_wallpapers/Pacific_Wallpaper_.jpg',
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
+              ValueListenableBuilder<String>(
+                valueListenable: WallpaperState.current,
+                builder: (context, path, _) => Image.asset(
+                  path,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                ),
               ),
               if (child != null) Positioned.fill(child: child),
               Positioned(
