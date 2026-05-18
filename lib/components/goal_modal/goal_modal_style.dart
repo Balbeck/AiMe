@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 abstract class GoalModalStyle {
   static const String createTitle = 'Nouveau Todo';
   static const String editTitle = 'Modifier le Todo';
+  static const String viewTitle = 'Détail du Todo';
+  static const String closeLabel = 'Fermer';
   static const String titleHint = 'Titre';
   static const String descHint = 'Description';
   static const String datePlaceholder = 'Date butoir (optionnelle)';
@@ -12,6 +14,9 @@ abstract class GoalModalStyle {
   static const ShapeBorder dialogShape = RoundedRectangleBorder(
     borderRadius: BorderRadius.all(Radius.circular(16.0)),
   );
+
+  static const BoxConstraints scrollableConstraints =
+      BoxConstraints(maxHeight: 320);
 
   static const EdgeInsets padding = EdgeInsets.all(24.0);
   static const double fieldGap = 12.0;

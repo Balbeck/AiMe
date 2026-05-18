@@ -78,6 +78,15 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertDayVote(DayVotesCompanion vote) =>
       into(dayVotes).insertOnConflictUpdate(vote);
 
+  Future<Goal?> getNextDeadline() {
+    final now = DateTime.now();
+    return (select(goals)
+          ..where((g) => g.dueDate.isBiggerOrEqualValue(now))
+          ..orderBy([(g) => OrderingTerm.asc(g.dueDate)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
+
   // Cigarettes
   Future<void> addCigarette() => into(cigarettes).insert(
         CigarettesCompanion.insert(timestamp: DateTime.now()),
