@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 abstract class HomePageStyle {
-  static const String pageTitle = 'Home';
-  static const EdgeInsets titlePadding = EdgeInsets.only(top: 100.0);
+  static const String bonjourText = 'Bonjour';
+  static const String hectorText = 'Hector';
+  static const TextStyle greetingStyle = TextStyle(
+    fontSize: 48.0,
+    fontWeight: FontWeight.bold,
+  );
 }
