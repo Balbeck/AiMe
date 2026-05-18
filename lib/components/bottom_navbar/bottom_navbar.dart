@@ -22,11 +22,6 @@ class BottomNavbar extends StatefulWidget {
       label: 'Home',
     ),
     NavbarButtonConfig(
-      icon: Icons.rocket_launch,
-      routePath: '/goals',
-      label: 'Goals',
-    ),
-    NavbarButtonConfig(
       icon: Icons.bar_chart,
       routePath: '/dashboard',
       label: 'Dashboard',
@@ -34,7 +29,12 @@ class BottomNavbar extends StatefulWidget {
     NavbarButtonConfig(
       icon: Icons.thumb_up_alt_rounded,
       routePath: '/journeeplusoumoins',
-      label: 'Journée +/-',
+      label: 'Journée',
+    ),
+    NavbarButtonConfig(
+      icon: Icons.rocket_launch,
+      routePath: '/goals',
+      label: 'Goals',
     ),
     NavbarButtonConfig(
       icon: Icons.smoking_rooms,
@@ -47,14 +47,14 @@ class BottomNavbar extends StatefulWidget {
       label: 'Calendrier',
     ),
     NavbarButtonConfig(
-      icon: Icons.person,
-      routePath: '/profile',
-      label: 'Profile',
-    ),
-    NavbarButtonConfig(
       icon: Icons.settings,
       routePath: '/parametres',
       label: 'Paramètres',
+    ),
+    NavbarButtonConfig(
+      icon: Icons.person,
+      routePath: '/profile',
+      label: 'Profil',
     ),
   ];
 
