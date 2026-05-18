@@ -24,7 +24,18 @@ class DayVotes extends Table {
   Set<Column> get primaryKey => {date};
 }
 
-@DriftDatabase(tables: [Goals, DayVotes])
+class Cigarettes extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  DateTimeColumn get timestamp => dateTime()();
+}
+
+@DataClassName('CbdEntry')
+class CbdEntries extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  DateTimeColumn get timestamp => dateTime()();
+}
+
+@DriftDatabase(tables: [Goals, DayVotes, Cigarettes, CbdEntries])
 class AppDatabase extends _$AppDatabase {
   AppDatabase._()
       : super(driftDatabase(
@@ -38,8 +49,18 @@ class AppDatabase extends _$AppDatabase {
   static final AppDatabase instance = AppDatabase._();
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 3;
 
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) => m.createAll(),
+        onUpgrade: (m, from, to) async {
+          if (from < 2) await m.createTable(cigarettes);
+          if (from < 3) await m.createTable(cbdEntries);
+        },
+      );
+
+  // Goals
   Future<List<Goal>> getAllGoals() => (select(goals)
         ..orderBy([(g) => OrderingTerm.desc(g.createdAt)]))
       .get();
@@ -47,6 +68,7 @@ class AppDatabase extends _$AppDatabase {
   Future<void> upsertGoal(GoalsCompanion goal) =>
       into(goals).insertOnConflictUpdate(goal);
 
+  // Day votes
   Future<DayVoteEntry?> getVoteForDate(String date) =>
       (select(dayVotes)..where((v) => v.date.equals(date))).getSingleOrNull();
 
@@ -55,4 +77,32 @@ class AppDatabase extends _$AppDatabase {
 
   Future<void> upsertDayVote(DayVotesCompanion vote) =>
       into(dayVotes).insertOnConflictUpdate(vote);
+
+  // Cigarettes
+  Future<void> addCigarette() => into(cigarettes).insert(
+        CigarettesCompanion.insert(timestamp: DateTime.now()),
+      );
+
+  Future<List<Cigarette>> getCigarettesForDate(DateTime date) {
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+    return (select(cigarettes)
+          ..where((c) => c.timestamp.isBetweenValues(start, end))
+          ..orderBy([(c) => OrderingTerm.asc(c.timestamp)]))
+        .get();
+  }
+
+  // CBD
+  Future<void> addCbd() => into(cbdEntries).insert(
+        CbdEntriesCompanion.insert(timestamp: DateTime.now()),
+      );
+
+  Future<List<CbdEntry>> getCbdForDate(DateTime date) {
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+    return (select(cbdEntries)
+          ..where((c) => c.timestamp.isBetweenValues(start, end))
+          ..orderBy([(c) => OrderingTerm.asc(c.timestamp)]))
+        .get();
+  }
 }

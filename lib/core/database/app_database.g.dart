@@ -627,16 +627,411 @@ class DayVotesCompanion extends UpdateCompanion<DayVoteEntry> {
   }
 }
 
+class $CigarettesTable extends Cigarettes
+    with TableInfo<$CigarettesTable, Cigarette> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CigarettesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, timestamp];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cigarettes';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<Cigarette> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_timestampMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Cigarette map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return Cigarette(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+    );
+  }
+
+  @override
+  $CigarettesTable createAlias(String alias) {
+    return $CigarettesTable(attachedDatabase, alias);
+  }
+}
+
+class Cigarette extends DataClass implements Insertable<Cigarette> {
+  final int id;
+  final DateTime timestamp;
+  const Cigarette({required this.id, required this.timestamp});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    return map;
+  }
+
+  CigarettesCompanion toCompanion(bool nullToAbsent) {
+    return CigarettesCompanion(id: Value(id), timestamp: Value(timestamp));
+  }
+
+  factory Cigarette.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return Cigarette(
+      id: serializer.fromJson<int>(json['id']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+    };
+  }
+
+  Cigarette copyWith({int? id, DateTime? timestamp}) =>
+      Cigarette(id: id ?? this.id, timestamp: timestamp ?? this.timestamp);
+  Cigarette copyWithCompanion(CigarettesCompanion data) {
+    return Cigarette(
+      id: data.id.present ? data.id.value : this.id,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('Cigarette(')
+          ..write('id: $id, ')
+          ..write('timestamp: $timestamp')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, timestamp);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is Cigarette &&
+          other.id == this.id &&
+          other.timestamp == this.timestamp);
+}
+
+class CigarettesCompanion extends UpdateCompanion<Cigarette> {
+  final Value<int> id;
+  final Value<DateTime> timestamp;
+  const CigarettesCompanion({
+    this.id = const Value.absent(),
+    this.timestamp = const Value.absent(),
+  });
+  CigarettesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime timestamp,
+  }) : timestamp = Value(timestamp);
+  static Insertable<Cigarette> custom({
+    Expression<int>? id,
+    Expression<DateTime>? timestamp,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (timestamp != null) 'timestamp': timestamp,
+    });
+  }
+
+  CigarettesCompanion copyWith({Value<int>? id, Value<DateTime>? timestamp}) {
+    return CigarettesCompanion(
+      id: id ?? this.id,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CigarettesCompanion(')
+          ..write('id: $id, ')
+          ..write('timestamp: $timestamp')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CbdEntriesTable extends CbdEntries
+    with TableInfo<$CbdEntriesTable, CbdEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CbdEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _timestampMeta = const VerificationMeta(
+    'timestamp',
+  );
+  @override
+  late final GeneratedColumn<DateTime> timestamp = GeneratedColumn<DateTime>(
+    'timestamp',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, timestamp];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cbd_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CbdEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('timestamp')) {
+      context.handle(
+        _timestampMeta,
+        timestamp.isAcceptableOrUnknown(data['timestamp']!, _timestampMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_timestampMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CbdEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CbdEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      timestamp: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}timestamp'],
+      )!,
+    );
+  }
+
+  @override
+  $CbdEntriesTable createAlias(String alias) {
+    return $CbdEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CbdEntry extends DataClass implements Insertable<CbdEntry> {
+  final int id;
+  final DateTime timestamp;
+  const CbdEntry({required this.id, required this.timestamp});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['timestamp'] = Variable<DateTime>(timestamp);
+    return map;
+  }
+
+  CbdEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CbdEntriesCompanion(id: Value(id), timestamp: Value(timestamp));
+  }
+
+  factory CbdEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CbdEntry(
+      id: serializer.fromJson<int>(json['id']),
+      timestamp: serializer.fromJson<DateTime>(json['timestamp']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'timestamp': serializer.toJson<DateTime>(timestamp),
+    };
+  }
+
+  CbdEntry copyWith({int? id, DateTime? timestamp}) =>
+      CbdEntry(id: id ?? this.id, timestamp: timestamp ?? this.timestamp);
+  CbdEntry copyWithCompanion(CbdEntriesCompanion data) {
+    return CbdEntry(
+      id: data.id.present ? data.id.value : this.id,
+      timestamp: data.timestamp.present ? data.timestamp.value : this.timestamp,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CbdEntry(')
+          ..write('id: $id, ')
+          ..write('timestamp: $timestamp')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, timestamp);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CbdEntry &&
+          other.id == this.id &&
+          other.timestamp == this.timestamp);
+}
+
+class CbdEntriesCompanion extends UpdateCompanion<CbdEntry> {
+  final Value<int> id;
+  final Value<DateTime> timestamp;
+  const CbdEntriesCompanion({
+    this.id = const Value.absent(),
+    this.timestamp = const Value.absent(),
+  });
+  CbdEntriesCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime timestamp,
+  }) : timestamp = Value(timestamp);
+  static Insertable<CbdEntry> custom({
+    Expression<int>? id,
+    Expression<DateTime>? timestamp,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (timestamp != null) 'timestamp': timestamp,
+    });
+  }
+
+  CbdEntriesCompanion copyWith({Value<int>? id, Value<DateTime>? timestamp}) {
+    return CbdEntriesCompanion(
+      id: id ?? this.id,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (timestamp.present) {
+      map['timestamp'] = Variable<DateTime>(timestamp.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CbdEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('timestamp: $timestamp')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $GoalsTable goals = $GoalsTable(this);
   late final $DayVotesTable dayVotes = $DayVotesTable(this);
+  late final $CigarettesTable cigarettes = $CigarettesTable(this);
+  late final $CbdEntriesTable cbdEntries = $CbdEntriesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [goals, dayVotes];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    goals,
+    dayVotes,
+    cigarettes,
+    cbdEntries,
+  ];
 }
 
 typedef $$GoalsTableCreateCompanionBuilder =
@@ -994,6 +1389,247 @@ typedef $$DayVotesTableProcessedTableManager =
       DayVoteEntry,
       PrefetchHooks Function()
     >;
+typedef $$CigarettesTableCreateCompanionBuilder =
+    CigarettesCompanion Function({Value<int> id, required DateTime timestamp});
+typedef $$CigarettesTableUpdateCompanionBuilder =
+    CigarettesCompanion Function({Value<int> id, Value<DateTime> timestamp});
+
+class $$CigarettesTableFilterComposer
+    extends Composer<_$AppDatabase, $CigarettesTable> {
+  $$CigarettesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CigarettesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CigarettesTable> {
+  $$CigarettesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CigarettesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CigarettesTable> {
+  $$CigarettesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+}
+
+class $$CigarettesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CigarettesTable,
+          Cigarette,
+          $$CigarettesTableFilterComposer,
+          $$CigarettesTableOrderingComposer,
+          $$CigarettesTableAnnotationComposer,
+          $$CigarettesTableCreateCompanionBuilder,
+          $$CigarettesTableUpdateCompanionBuilder,
+          (
+            Cigarette,
+            BaseReferences<_$AppDatabase, $CigarettesTable, Cigarette>,
+          ),
+          Cigarette,
+          PrefetchHooks Function()
+        > {
+  $$CigarettesTableTableManager(_$AppDatabase db, $CigarettesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CigarettesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CigarettesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CigarettesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+              }) => CigarettesCompanion(id: id, timestamp: timestamp),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime timestamp,
+              }) => CigarettesCompanion.insert(id: id, timestamp: timestamp),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CigarettesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CigarettesTable,
+      Cigarette,
+      $$CigarettesTableFilterComposer,
+      $$CigarettesTableOrderingComposer,
+      $$CigarettesTableAnnotationComposer,
+      $$CigarettesTableCreateCompanionBuilder,
+      $$CigarettesTableUpdateCompanionBuilder,
+      (Cigarette, BaseReferences<_$AppDatabase, $CigarettesTable, Cigarette>),
+      Cigarette,
+      PrefetchHooks Function()
+    >;
+typedef $$CbdEntriesTableCreateCompanionBuilder =
+    CbdEntriesCompanion Function({Value<int> id, required DateTime timestamp});
+typedef $$CbdEntriesTableUpdateCompanionBuilder =
+    CbdEntriesCompanion Function({Value<int> id, Value<DateTime> timestamp});
+
+class $$CbdEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CbdEntriesTable> {
+  $$CbdEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CbdEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CbdEntriesTable> {
+  $$CbdEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get timestamp => $composableBuilder(
+    column: $table.timestamp,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CbdEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CbdEntriesTable> {
+  $$CbdEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get timestamp =>
+      $composableBuilder(column: $table.timestamp, builder: (column) => column);
+}
+
+class $$CbdEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CbdEntriesTable,
+          CbdEntry,
+          $$CbdEntriesTableFilterComposer,
+          $$CbdEntriesTableOrderingComposer,
+          $$CbdEntriesTableAnnotationComposer,
+          $$CbdEntriesTableCreateCompanionBuilder,
+          $$CbdEntriesTableUpdateCompanionBuilder,
+          (CbdEntry, BaseReferences<_$AppDatabase, $CbdEntriesTable, CbdEntry>),
+          CbdEntry,
+          PrefetchHooks Function()
+        > {
+  $$CbdEntriesTableTableManager(_$AppDatabase db, $CbdEntriesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CbdEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CbdEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CbdEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> timestamp = const Value.absent(),
+              }) => CbdEntriesCompanion(id: id, timestamp: timestamp),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime timestamp,
+              }) => CbdEntriesCompanion.insert(id: id, timestamp: timestamp),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CbdEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CbdEntriesTable,
+      CbdEntry,
+      $$CbdEntriesTableFilterComposer,
+      $$CbdEntriesTableOrderingComposer,
+      $$CbdEntriesTableAnnotationComposer,
+      $$CbdEntriesTableCreateCompanionBuilder,
+      $$CbdEntriesTableUpdateCompanionBuilder,
+      (CbdEntry, BaseReferences<_$AppDatabase, $CbdEntriesTable, CbdEntry>),
+      CbdEntry,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -1002,4 +1638,8 @@ class $AppDatabaseManager {
       $$GoalsTableTableManager(_db, _db.goals);
   $$DayVotesTableTableManager get dayVotes =>
       $$DayVotesTableTableManager(_db, _db.dayVotes);
+  $$CigarettesTableTableManager get cigarettes =>
+      $$CigarettesTableTableManager(_db, _db.cigarettes);
+  $$CbdEntriesTableTableManager get cbdEntries =>
+      $$CbdEntriesTableTableManager(_db, _db.cbdEntries);
 }
